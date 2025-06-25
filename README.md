@@ -146,7 +146,7 @@ The `KANLinear` layers have an `update_grid(x)` method to adapt spline grids bas
 
 This repository (`github.com/shawcharles/efficient-kan`) is a fork of an efficient KAN implementation (see original at [https://github.com/Blealtan/efficient-kan](https://github.com/Blealtan/efficient-kan) by @Blealtan). This specific version was utilized in the following research:
 
-*   Shaw, C. (2025). Nuisance Function Estimation in the DML Framework: A Tale of Two Models. arXiv preprint. *(User to add arXiv link when available)*
-*   Shaw, C. (2025). Efficient Estimation of Distributional Treatment Effects with Endogenous Treatments: A Machine Learning Approach. arXiv preprint. *(User to add arXiv link when available)*
+*   Shaw, C. (2025). **“Rethinking Distributional IVs: KAN-Powered D-IV-LATE & Model Choice”**  
+([arXiv:2506.12765](https://arxiv.org/abs/2506.12765)).
 
 If using this code, especially in work related to the KAN-D-IV-LATE estimator presented in the papers above, please cite the relevant paper(s) and consider acknowledging the original `efficient-kan` library and the foundational `pykan` library by Liu et al. (2024).
