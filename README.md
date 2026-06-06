@@ -39,10 +39,43 @@ You can install this specific version of the library directly from this GitHub r
 ```bash
 pip install git+https://github.com/shawcharles/efficient-kan.git
 ```
-Ensure you have PyTorch installed in your environment.
+
+For local development:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+```
+
+To run the MNIST example, install the example extras:
+
+```bash
+pip install -e ".[examples]"
+```
 
 ## Dependencies
--   PyTorch (refer to `pyproject.toml` in the original `Blealtan/efficient-kan` repository for specific versioning if needed, or ensure a recent version).
+
+- Runtime: PyTorch.
+- Development extras: pytest, pytest-cov, ruff.
+- Example extras: torchvision, tqdm.
+
+The importable package intentionally keeps runtime dependencies minimal so it can
+serve as a lightweight downstream dependency for research pipelines.
+
+## Development
+
+Run the validation gate from the repository root:
+
+```bash
+python -m compileall src tests examples
+pytest -q
+pytest --cov=src/efficient_kan --cov-report=term-missing tests
+ruff check .
+```
+
+The test suite is deterministic and intentionally favors unit-level numerical
+contracts over long convergence tests.
 
 ## Quick Start / Basic Usage
 
@@ -124,6 +157,11 @@ The main `KAN` class is initialized as `KAN(layers_hidden, grid_size=5, spline_o
 -   `grid_range` (list/tuple, default: `[-1, 1]`): The initial range for the spline grids.
 -   `enable_standalone_scale_spline` (bool, default: `True`, for `KANLinear`): If `True`, includes an additional learnable scalar multiplier for each spline activation, similar to a feature in the original `pykan`. Setting to `False` can improve efficiency but might alter performance.
 
+Inputs should generally be scaled into a range compatible with the spline grid,
+especially if `update_grid=False`. If you call `model(x, update_grid=True)`, each
+layer mutates its grid based on the current batch; this is useful periodically
+during training but is more expensive than a normal forward pass.
+
 ## Regularization
 
 This library implements L1-type regularization on the spline weights to encourage sparsity. To apply it during training, you must manually retrieve the regularization term using `model.regularization_loss()` and add it to your main loss function, scaled by a chosen strength factor:
@@ -137,6 +175,10 @@ loss_reg = model.regularization_loss(regularize_activation=1.0, regularize_entro
 total_loss = main_criterion_loss + your_reg_strength_multiplier * loss_reg
 ```
 You can adjust `your_reg_strength_multiplier` to control the overall impact of this regularization. The internal `regularize_activation` and `regularize_entropy` parameters can also be tuned.
+
+The regularization implementation is finite when spline weights are zero. When
+entropy regularization is disabled with `regularize_entropy=0.0`, the entropy
+term is not evaluated.
 
 ## Grid Update
 

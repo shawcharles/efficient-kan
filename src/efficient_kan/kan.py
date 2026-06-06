@@ -1,24 +1,35 @@
+import math
+from typing import List, Tuple, Type
+
 import torch
 import torch.nn.functional as F
-import math
 
 
 class KANLinear(torch.nn.Module):
     def __init__(
         self,
-        in_features,
-        out_features,
-        grid_size=5,
-        spline_order=3,
-        scale_noise=0.1,
-        scale_base=1.0,
-        scale_spline=1.0,
-        enable_standalone_scale_spline=True,
-        base_activation=torch.nn.SiLU,
-        grid_eps=0.02,
-        grid_range=[-1, 1],
-    ):
-        super(KANLinear, self).__init__()
+        in_features: int,
+        out_features: int,
+        grid_size: int = 5,
+        spline_order: int = 3,
+        scale_noise: float = 0.1,
+        scale_base: float = 1.0,
+        scale_spline: float = 1.0,
+        enable_standalone_scale_spline: bool = True,
+        base_activation: Type[torch.nn.Module] = torch.nn.SiLU,
+        grid_eps: float = 0.02,
+        grid_range: Tuple[float, float] = (-1.0, 1.0),
+    ) -> None:
+        super().__init__()
+        if in_features <= 0 or out_features <= 0:
+            raise ValueError("in_features and out_features must be positive")
+        if grid_size <= 0:
+            raise ValueError("grid_size must be positive")
+        if spline_order <= 0:
+            raise ValueError("spline_order must be positive")
+        if len(grid_range) != 2 or grid_range[0] >= grid_range[1]:
+            raise ValueError("grid_range must contain two increasing values")
+
         self.in_features = in_features
         self.out_features = out_features
         self.grid_size = grid_size
@@ -53,8 +64,9 @@ class KANLinear(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
-        torch.nn.init.kaiming_uniform_(self.base_weight, a=math.sqrt(5) * self.scale_base)
+    def reset_parameters(self) -> None:
+        torch.nn.init.kaiming_uniform_(self.base_weight, a=math.sqrt(5))
+        self.base_weight.data.mul_(self.scale_base)
         with torch.no_grad():
             noise = (
                 (
@@ -73,9 +85,19 @@ class KANLinear(torch.nn.Module):
             )
             if self.enable_standalone_scale_spline:
                 # torch.nn.init.constant_(self.spline_scaler, self.scale_spline)
-                torch.nn.init.kaiming_uniform_(self.spline_scaler, a=math.sqrt(5) * self.scale_spline)
+                torch.nn.init.kaiming_uniform_(self.spline_scaler, a=math.sqrt(5))
+                self.spline_scaler.data.mul_(self.scale_spline)
 
-    def b_splines(self, x: torch.Tensor):
+    def _validate_input(self, x: torch.Tensor, *, name: str = "x") -> None:
+        if x.dim() != 2 or x.size(1) != self.in_features:
+            raise ValueError(
+                f"{name} must have shape (batch_size, {self.in_features}); "
+                f"got {tuple(x.shape)}"
+            )
+        if not torch.isfinite(x).all():
+            raise ValueError(f"{name} must contain only finite values")
+
+    def b_splines(self, x: torch.Tensor) -> torch.Tensor:
         """
         Compute the B-spline bases for the given input tensor.
 
@@ -85,7 +107,7 @@ class KANLinear(torch.nn.Module):
         Returns:
             torch.Tensor: B-spline bases tensor of shape (batch_size, in_features, grid_size + spline_order).
         """
-        assert x.dim() == 2 and x.size(1) == self.in_features
+        self._validate_input(x)
 
         grid: torch.Tensor = (
             self.grid
@@ -103,14 +125,16 @@ class KANLinear(torch.nn.Module):
                 * bases[:, :, 1:]
             )
 
-        assert bases.size() == (
+        expected_shape = (
             x.size(0),
             self.in_features,
             self.grid_size + self.spline_order,
         )
+        if bases.size() != expected_shape:
+            raise RuntimeError(f"Unexpected B-spline basis shape: {tuple(bases.shape)}")
         return bases.contiguous()
 
-    def curve2coeff(self, x: torch.Tensor, y: torch.Tensor):
+    def curve2coeff(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         """
         Compute the coefficients of the curve that interpolates the given points.
 
@@ -121,37 +145,54 @@ class KANLinear(torch.nn.Module):
         Returns:
             torch.Tensor: Coefficients tensor of shape (out_features, in_features, grid_size + spline_order).
         """
-        assert x.dim() == 2 and x.size(1) == self.in_features
-        assert y.size() == (x.size(0), self.in_features, self.out_features)
+        self._validate_input(x)
+        expected_y_shape = (x.size(0), self.in_features, self.out_features)
+        if y.size() != expected_y_shape:
+            raise ValueError(f"y must have shape {expected_y_shape}; got {tuple(y.shape)}")
+        if not torch.isfinite(y).all():
+            raise ValueError("y must contain only finite values")
 
         A = self.b_splines(x).transpose(
             0, 1
         )  # (in_features, batch_size, grid_size + spline_order)
         B = y.transpose(0, 1)  # (in_features, batch_size, out_features)
-        solution = torch.linalg.lstsq(
-            A, B
-        ).solution  # (in_features, grid_size + spline_order, out_features)
+        try:
+            solution = torch.linalg.lstsq(
+                A, B
+            ).solution  # (in_features, grid_size + spline_order, out_features)
+        except RuntimeError as exc:
+            raise RuntimeError(
+                "Failed to solve spline interpolation coefficients; "
+                "check that inputs are finite and the spline basis is well-conditioned."
+            ) from exc
         result = solution.permute(
             2, 0, 1
         )  # (out_features, in_features, grid_size + spline_order)
 
-        assert result.size() == (
+        expected_result_shape = (
             self.out_features,
             self.in_features,
             self.grid_size + self.spline_order,
         )
+        if result.size() != expected_result_shape:
+            raise RuntimeError(
+                f"Unexpected coefficient shape: {tuple(result.shape)}"
+            )
         return result.contiguous()
 
     @property
-    def scaled_spline_weight(self):
+    def scaled_spline_weight(self) -> torch.Tensor:
         return self.spline_weight * (
             self.spline_scaler.unsqueeze(-1)
             if self.enable_standalone_scale_spline
             else 1.0
         )
 
-    def forward(self, x: torch.Tensor):
-        assert x.size(-1) == self.in_features
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.size(-1) != self.in_features:
+            raise ValueError(
+                f"Expected input last dimension {self.in_features}; got {x.size(-1)}"
+            )
         original_shape = x.shape
         x = x.reshape(-1, self.in_features)
 
@@ -161,13 +202,15 @@ class KANLinear(torch.nn.Module):
             self.scaled_spline_weight.view(self.out_features, -1),
         )
         output = base_output + spline_output
-        
+
         output = output.reshape(*original_shape[:-1], self.out_features)
         return output
 
     @torch.no_grad()
-    def update_grid(self, x: torch.Tensor, margin=0.01):
-        assert x.dim() == 2 and x.size(1) == self.in_features
+    def update_grid(self, x: torch.Tensor, margin: float = 0.01) -> None:
+        self._validate_input(x)
+        if margin <= 0:
+            raise ValueError("margin must be positive")
         batch = x.size(0)
 
         splines = self.b_splines(x)  # (batch, in, coeff)
@@ -178,6 +221,8 @@ class KANLinear(torch.nn.Module):
         unreduced_spline_output = unreduced_spline_output.permute(
             1, 0, 2
         )  # (batch, in, out)
+        if not torch.isfinite(unreduced_spline_output).all():
+            raise ValueError("Spline outputs must be finite before grid update")
 
         # sort each channel individually to collect data distribution
         x_sorted = torch.sort(x, dim=0)[0]
@@ -214,7 +259,11 @@ class KANLinear(torch.nn.Module):
         self.grid.copy_(grid.T)
         self.spline_weight.data.copy_(self.curve2coeff(x, unreduced_spline_output))
 
-    def regularization_loss(self, regularize_activation=1.0, regularize_entropy=1.0):
+    def regularization_loss(
+        self,
+        regularize_activation: float = 1.0,
+        regularize_entropy: float = 1.0,
+    ) -> torch.Tensor:
         """
         Compute the regularization loss.
 
@@ -229,8 +278,11 @@ class KANLinear(torch.nn.Module):
         """
         l1_fake = self.spline_weight.abs().mean(-1)
         regularization_loss_activation = l1_fake.sum()
-        p = l1_fake / regularization_loss_activation
-        regularization_loss_entropy = -torch.sum(p * p.log())
+        regularization_loss_entropy = regularization_loss_activation.new_zeros(())
+        if regularize_entropy != 0 and regularization_loss_activation > 0:
+            p = l1_fake / regularization_loss_activation
+            p = p[p > 0]
+            regularization_loss_entropy = -torch.sum(p * p.log())
         return (
             regularize_activation * regularization_loss_activation
             + regularize_entropy * regularization_loss_entropy
@@ -240,17 +292,20 @@ class KANLinear(torch.nn.Module):
 class KAN(torch.nn.Module):
     def __init__(
         self,
-        layers_hidden,
-        grid_size=5,
-        spline_order=3,
-        scale_noise=0.1,
-        scale_base=1.0,
-        scale_spline=1.0,
-        base_activation=torch.nn.SiLU,
-        grid_eps=0.02,
-        grid_range=[-1, 1],
-    ):
-        super(KAN, self).__init__()
+        layers_hidden: List[int],
+        grid_size: int = 5,
+        spline_order: int = 3,
+        scale_noise: float = 0.1,
+        scale_base: float = 1.0,
+        scale_spline: float = 1.0,
+        enable_standalone_scale_spline: bool = True,
+        base_activation: Type[torch.nn.Module] = torch.nn.SiLU,
+        grid_eps: float = 0.02,
+        grid_range: Tuple[float, float] = (-1.0, 1.0),
+    ) -> None:
+        super().__init__()
+        if len(layers_hidden) < 2:
+            raise ValueError("layers_hidden must contain at least input and output sizes")
         self.grid_size = grid_size
         self.spline_order = spline_order
 
@@ -265,20 +320,25 @@ class KAN(torch.nn.Module):
                     scale_noise=scale_noise,
                     scale_base=scale_base,
                     scale_spline=scale_spline,
+                    enable_standalone_scale_spline=enable_standalone_scale_spline,
                     base_activation=base_activation,
                     grid_eps=grid_eps,
                     grid_range=grid_range,
                 )
             )
 
-    def forward(self, x: torch.Tensor, update_grid=False):
+    def forward(self, x: torch.Tensor, update_grid: bool = False) -> torch.Tensor:
         for layer in self.layers:
             if update_grid:
                 layer.update_grid(x)
             x = layer(x)
         return x
 
-    def regularization_loss(self, regularize_activation=1.0, regularize_entropy=1.0):
+    def regularization_loss(
+        self,
+        regularize_activation: float = 1.0,
+        regularize_entropy: float = 1.0,
+    ) -> torch.Tensor:
         return sum(
             layer.regularization_loss(regularize_activation, regularize_entropy)
             for layer in self.layers
