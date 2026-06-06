@@ -70,13 +70,7 @@ serve as a lightweight downstream dependency for research pipelines.
 Run the validation gate from the repository root:
 
 ```bash
-python -m compileall src tests examples
-ruff check .
-pytest -q
-pytest --cov=src/efficient_kan --cov-report=term-missing tests
-rm -rf build dist src/*.egg-info
-python -m build
-python -m twine check dist/*
+scripts/validate.sh
 ```
 
 The test suite is deterministic and intentionally favors unit-level numerical

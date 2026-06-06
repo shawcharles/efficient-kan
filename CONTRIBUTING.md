@@ -22,16 +22,10 @@ optional dependency groups.
 
 ## Validation
 
-Run the same bounded checks used by CI:
+Run the local validation gate:
 
 ```bash
-python -m compileall src tests examples
-ruff check .
-pytest -q
-pytest --cov=src/efficient_kan --cov-report=term-missing tests
-rm -rf build dist src/*.egg-info
-python -m build
-python -m twine check dist/*
+scripts/validate.sh
 ```
 
 The coverage gate is configured in `pyproject.toml`.
@@ -57,4 +51,4 @@ python -m pip install dist/*.whl --force-reinstall
 python -c "from efficient_kan import KAN; print(KAN([2, 3, 1]))"
 ```
 
-Do not publish release artifacts until CI is green.
+Do not publish release artifacts until the local validation gate passes.
