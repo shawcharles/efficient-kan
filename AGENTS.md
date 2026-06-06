@@ -50,6 +50,9 @@ python -m compileall src tests examples
 pytest -q
 pytest --cov=src/efficient_kan --cov-report=term-missing tests
 ruff check .
+rm -rf build dist src/*.egg-info
+python -m build
+python -m twine check dist/*
 ```
 
 ## Downstream Compatibility

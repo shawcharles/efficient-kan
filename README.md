@@ -57,8 +57,10 @@ pip install -e ".[examples]"
 ## Dependencies
 
 - Runtime: PyTorch.
-- Development extras: pytest, pytest-cov, ruff.
+- Development extras: build, pytest, pytest-cov, ruff, twine.
 - Example extras: torchvision, tqdm.
+
+This fork supports Python 3.10 and newer.
 
 The importable package intentionally keeps runtime dependencies minimal so it can
 serve as a lightweight downstream dependency for research pipelines.
@@ -69,13 +71,20 @@ Run the validation gate from the repository root:
 
 ```bash
 python -m compileall src tests examples
+ruff check .
 pytest -q
 pytest --cov=src/efficient_kan --cov-report=term-missing tests
-ruff check .
+rm -rf build dist src/*.egg-info
+python -m build
+python -m twine check dist/*
 ```
 
 The test suite is deterministic and intentionally favors unit-level numerical
 contracts over long convergence tests.
+
+This fork standardizes on pip plus `pyproject.toml` with a setuptools build
+backend. It does not use PDM or a checked-in lockfile. See `CONTRIBUTING.md` for
+the full contributor workflow.
 
 ## Quick Start / Basic Usage
 

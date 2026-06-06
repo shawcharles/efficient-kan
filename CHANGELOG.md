@@ -15,11 +15,19 @@ semantic versioning once releases are cut.
   dict round trips, and a tiny training smoke.
 - Added pytest and ruff configuration in `pyproject.toml`.
 - Added optional dependency groups for development and examples.
+- Added GitHub Actions CI for compile, lint, tests, coverage, and package
+  metadata checks.
+- Added contributor documentation for pip/pyproject development and release
+  checks.
 
 ### Changed
 
 - Runtime dependencies now only include PyTorch; test and example dependencies
   moved to optional extras.
+- Build configuration now uses setuptools via `pyproject.toml`; PDM lockfile
+  support was removed.
+- Supported Python metadata now targets Python 3.10 and newer, matching the CI
+  matrix and modern setuptools packaging metadata.
 - MNIST example now uses a `main()` function and import-safe module guard.
 - `KAN` now forwards the `enable_standalone_scale_spline` option to its
   `KANLinear` layers.
