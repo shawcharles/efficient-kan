@@ -50,11 +50,11 @@ body {
 }
 
 .main-content-wrap {
-  max-width: 1180px;
+  max-width: none;
 }
 
 .main-content {
-  max-width: 980px;
+  max-width: 1240px;
   padding-top: 2rem;
 }
 
@@ -277,10 +277,25 @@ body {
 
   .main {
     margin-left: 17.5rem;
+    max-width: none;
   }
 
   .site-header {
     width: 17.5rem;
+  }
+
+  .main-header,
+  .main-content-wrap {
+    max-width: none;
+    padding-left: clamp(2rem, 4vw, 4.5rem);
+    padding-right: clamp(2rem, 4vw, 4.5rem);
+  }
+
+  .main-content {
+    width: min(100%, 1240px);
+    max-width: none;
+    margin-left: 0;
+    margin-right: auto;
   }
 }
 
