@@ -9,6 +9,9 @@ Network (KAN) layers. It is designed for research workflows that need a small,
 importable KAN dependency with predictable tensor behaviour, deterministic tests,
 and minimal runtime dependencies.
 
+The documentation site is available at
+<https://shawcharles.github.io/efficient-kan/>.
+
 The implementation focuses on the efficient formulation used in modern KAN
 implementations: inputs are expanded over B-spline bases and then combined with
 ordinary matrix operations. This avoids the large activation tensors used by
