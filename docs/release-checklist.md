@@ -2,6 +2,7 @@
 title: Release Checklist
 description: Local-only release readiness gate for efficient-kan.
 permalink: /release-checklist/
+nav_order: 9
 ---
 
 # Release Checklist
@@ -99,6 +100,16 @@ rm -rf build dist src/*.egg-info
 python -m build
 python -m twine check dist/*
 ```
+
+If documentation changed, also render the GitHub Pages site locally:
+
+```bash
+cd docs
+bundle install
+bundle exec jekyll build
+```
+
+This is a local documentation check, not CI/CD.
 
 Expected artefacts for version `0.2.0` are:
 

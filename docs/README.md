@@ -2,6 +2,8 @@
 title: Documentation Index
 description: Index for efficient-kan documentation.
 permalink: /docs-index/
+nav_exclude: true
+search_exclude: true
 ---
 
 # efficient-kan Documentation

@@ -1,11 +1,14 @@
 ---
 title: efficient-kan Documentation
+description: Documentation for efficient-kan.
+permalink: /
+nav_order: 1
 ---
 
 <section class="hero">
   <div>
     <p class="eyebrow">Pure PyTorch KAN layers</p>
-    <h1>Documentation for reproducible KAN research workflows.</h1>
+    <h1>efficient-kan Documentation</h1>
     <p class="hero-lede">
       <code>efficient-kan</code> provides compact Kolmogorov-Arnold Network
       layers with explicit tensor semantics, adaptive-grid documentation,

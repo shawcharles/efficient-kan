@@ -2,6 +2,7 @@
 title: Quickstart
 description: Minimal installation and usage examples for efficient-kan.
 permalink: /quickstart/
+nav_order: 2
 ---
 
 # Quickstart

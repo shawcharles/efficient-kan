@@ -1,21 +1,18 @@
 ---
 title: Third-Party Notices
-description: Attribution for documentation site assets.
+description: Attribution for documentation site theme dependencies.
 permalink: /third-party-notices/
+nav_order: 10
 ---
 
 # Third-Party Notices
 
-The documentation site vendors layout, include, stylesheet, JavaScript, font,
-and image assets derived from
-[vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll), a Jekyll version
-of the Docsy documentation theme.
+The documentation site uses
+[Just the Docs](https://github.com/just-the-docs/just-the-docs), a Jekyll
+theme for documentation sites.
 
-`vsoch/docsy-jekyll` is distributed under the Apache License 2.0. The vendored
-licence and copyright notice are included in this documentation source tree:
-
-- [DOCSY-JEKYLL-LICENSE]({{ site.baseurl }}/DOCSY-JEKYLL-LICENSE)
-- [DOCSY-JEKYLL-COPYRIGHT]({{ site.baseurl }}/DOCSY-JEKYLL-COPYRIGHT)
+Just the Docs is distributed under the MIT Licence. The theme is referenced as
+a remote Jekyll theme rather than vendored into this repository.
 
 Local documentation content for `efficient-kan` remains part of this
 repository.

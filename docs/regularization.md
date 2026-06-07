@@ -2,6 +2,7 @@
 title: Regularisation
 description: Guidance for efficient-kan regularization_loss.
 permalink: /regularization/
+nav_order: 5
 ---
 
 # Regularisation

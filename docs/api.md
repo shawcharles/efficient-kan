@@ -2,6 +2,7 @@
 title: API Reference
 description: Public API reference for KAN and KANLinear.
 permalink: /api/
+nav_order: 3
 ---
 
 # API Reference

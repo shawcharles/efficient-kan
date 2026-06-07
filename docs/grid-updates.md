@@ -2,6 +2,7 @@
 title: Adaptive Grid Updates
 description: Guidance for update_grid state mutation, reproducibility, and failure modes.
 permalink: /grid-updates/
+nav_order: 4
 ---
 
 # Adaptive Grid Updates

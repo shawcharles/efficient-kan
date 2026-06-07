@@ -2,6 +2,7 @@
 title: Reproducibility
 description: Seeds, PyTorch sensitivity, provenance, and downstream artefact expectations.
 permalink: /reproducibility/
+nav_order: 7
 ---
 
 # Reproducibility

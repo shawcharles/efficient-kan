@@ -2,6 +2,7 @@
 title: Development
 description: Contributor setup, validation commands, package constraints, and numerical-change policy.
 permalink: /development/
+nav_order: 8
 ---
 
 # Development
@@ -193,6 +194,19 @@ Use:
 - topical docs for numerical contracts, grid updates, regularisation,
   benchmarking, reproducibility, and release process;
 - `CHANGELOG.md` for release-facing changes.
+
+The GitHub Pages site uses Just the Docs through `docs/_config.yml`. To preview
+the site locally, use:
+
+```bash
+cd docs
+bundle install
+bundle exec jekyll serve
+```
+
+Local Jekyll rendering requires a working Ruby development environment,
+including headers needed by native gems. The Python package does not depend on
+the Ruby documentation toolchain.
 
 Keep documentation honest about numerical behaviour. Do not describe benchmark
 results, convergence, or estimator performance as general facts unless they are

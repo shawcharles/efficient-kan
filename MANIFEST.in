@@ -4,12 +4,11 @@ include CONTRIBUTING.md
 include LICENSE
 include pyproject.toml
 include .gitignore
-include docs/DOCSY-JEKYLL-LICENSE
-include docs/DOCSY-JEKYLL-COPYRIGHT
+include docs/Gemfile
 recursive-include scripts *.py *.sh
 recursive-include tests *.py
 recursive-include examples *.py
-recursive-include docs *.md *.yml *.html *.css *.js *.png *.ico *.xml *.json *.svg *.eot *.ttf *.woff *.woff2
+recursive-include docs *.md *.yml *.html *.scss *.svg
 prune handoff
 prune build
 prune dist

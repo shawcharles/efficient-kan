@@ -3,35 +3,60 @@ email: charles@charlesshaw.net
 author: Charles Shaw
 description: >-
   Pure-PyTorch Kolmogorov-Arnold Network layers for reproducible research workflows.
+
 url: "https://shawcharles.github.io"
 baseurl: "/efficient-kan"
-repo: "https://github.com/shawcharles/efficient-kan"
-github_user: "shawcharles"
-github_repo: "efficient-kan"
-github_branch: "main"
 repository: shawcharles/efficient-kan
-color: "#0f766e"
-tag_color: primary
-accentColor: teal
-themeColor: teal
-fixedNav: "true"
-feedback: false
-allow_search: true
+remote_theme: just-the-docs/just-the-docs@v0.10.1
+
+plugins:
+  - jekyll-remote-theme
+
 markdown: kramdown
+permalink: pretty
+
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  rel_url: true
+  button: false
+
+nav_sort: case_insensitive
+heading_anchors: true
+color_scheme: efficient-kan
+favicon_ico: "/assets/images/favicon.svg"
+logo: "/assets/images/logo.svg"
+
+aux_links:
+  "GitHub":
+    - "https://github.com/shawcharles/efficient-kan"
+aux_links_new_tab: true
+
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_repository: "https://github.com/shawcharles/efficient-kan"
+gh_edit_branch: "main"
+gh_edit_source: docs
+gh_edit_view_mode: "tree"
+
+footer_content: >-
+  Copyright &copy; 2026 Charles Shaw. Documentation uses the
+  <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>
+  Jekyll theme.
+
+callouts:
+  note:
+    title: Note
+    color: green
+  warning:
+    title: Warning
+    color: yellow
 
 defaults:
   - scope:
       path: ""
     values:
-      layout: page
-
-version_params:
-  versioning: false
-  version_menu: ""
-  version_dir: Archive
-  tocversion_dir: versions
-  latest: Current
-  allow_search: false
-  search_versions: []
-  versions:
-    - Current
+      layout: default

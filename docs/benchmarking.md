@@ -2,6 +2,7 @@
 title: Benchmarking
 description: Local benchmarking command and responsible comparison guidance.
 permalink: /benchmarking/
+nav_order: 6
 ---
 
 # Benchmarking
