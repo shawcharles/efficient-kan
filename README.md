@@ -1,43 +1,42 @@
-# An Efficient Implementation of Kolmogorov-Arnold Network (Fork)
+# efficient-kan
 
-**Note:** This repository (`github.com/shawcharles/efficient-kan`) is a fork of an efficient implementation of Kolmogorov-Arnold Networks (KAN), adapted and utilized for the analysis presented in:
+[![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-%3E%3D2.3-ee4c2c)](https://pytorch.org/)
+[![Package](https://img.shields.io/badge/package-pyproject.toml-informational)](./pyproject.toml)
 
-*   Shaw, C. (2025). **“Model Risk in Machine-Learning Distributional IV Estimation”**  
-([arXiv:2506.12765](https://arxiv.org/abs/2506.12765)). *(https://github.com/shawcharles/kan-d-iv-late)*
+`efficient-kan` is a compact pure-PyTorch implementation of Kolmogorov-Arnold
+Network (KAN) layers. It is designed for research workflows that need a small,
+importable KAN dependency with predictable tensor behaviour, deterministic tests,
+and minimal runtime dependencies.
 
-The original `efficient-kan` library (on which this fork is based) can be found at [https://github.com/Blealtan/efficient-kan](https://github.com/Blealtan/efficient-kan) (by @Blealtan). The original KAN implementation (`pykan`) is available [here](https://github.com/KindXiaoming/pykan).
+The implementation focuses on the efficient formulation used in modern KAN
+implementations: inputs are expanded over B-spline bases and then combined with
+ordinary matrix operations. This avoids the large activation tensors used by
+less efficient formulations and keeps forward and backward passes close to
+standard PyTorch linear algebra.
 
-This README combines information from the original `efficient-kan` README with added usage examples and context relevant to its application in the paper above.
+## Why Use This Package?
 
----
+- Pure PyTorch runtime dependency.
+- Small public API: `KANLinear` and `KAN`.
+- Efficient B-spline basis computation followed by matrix multiplication.
+- Optional learnable spline scaling.
+- Built-in spline-weight regularisation via `regularization_loss()`.
+- Adaptive spline grid updates through `update_grid()`.
+- Local validation with tests, linting, coverage, build checks, and metadata
+  checks.
 
-*(Original `efficient-kan` README content starts here, slightly edited for context and integrated with new sections)*
+This repository is also the KAN dependency used in:
 
-## Overview and Efficiency Gains
-
-This repository contains an efficient PyTorch implementation of Kolmogorov-Arnold Networks (KAN). The primary motivation is to address performance issues in the original `pykan` implementation, which arose from the need to expand intermediate variables for activation functions.
-
-For a KAN layer with `in_features` and `out_features`, `pykan` expands the input to `(batch_size, out_features, in_features)`. This implementation reformulates the computation: it activates the input with B-spline basis functions and then linearly combines them. This significantly reduces memory costs and maps computations to straightforward matrix multiplications, benefiting both forward and backward passes.
-
-## Key Differences from Original `pykan`
-
-1.  **Sparsification (L1 Regularization):**
-    The original KAN paper proposed L1 regularization on activations for sparsification. This is computationally intensive with the expanded tensor. This `efficient-kan` implementation uses a more standard L1 regularization on the *spline weights*, accessible via the `model.regularization_loss()` method. This approach is compatible with the efficient reformulation. While it also encourages sparsity, its impact on interpretability compared to activation-based L1 may differ.
-
-2.  **Learnable Scale for Spline Activations:**
-    Original `pykan` includes a learnable scale for each spline activation. This implementation provides an option `enable_standalone_scale_spline` (default: `True` in the `KANLinear` layer) for this feature. Setting it to `False` can improve efficiency but may alter performance.
-
-3.  **Parameter Initialization:**
-    The `base_weight` and `spline_scaler` matrices are initialized with `kaiming_uniform_` (following `nn.Linear`), which showed improved performance on MNIST in the original `efficient-kan` development.
-
----
+> Shaw, C. (2025). "Model Risk in Machine-Learning Distributional IV Estimation".
+> [arXiv:2506.12765](https://arxiv.org/abs/2506.12765)
 
 ## Installation
 
-You can install this specific version of the library directly from this GitHub repository:
+Install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/shawcharles/efficient-kan.git
+python -m pip install "git+https://github.com/shawcharles/efficient-kan.git"
 ```
 
 For local development:
@@ -45,153 +44,162 @@ For local development:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev]"
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 ```
 
-To run the MNIST example, install the example extras:
+For the MNIST example:
 
 ```bash
-pip install -e ".[examples]"
+python -m pip install -e ".[examples]"
+python examples/mnist.py
 ```
 
-## Dependencies
+## Quick Start
 
-- Runtime: PyTorch.
-- Development extras: build, pytest, pytest-cov, ruff, twine.
-- Example extras: torchvision, tqdm.
+```python
+import torch
+from efficient_kan import KAN
 
-This fork supports Python 3.10 and newer.
+model = KAN(
+    layers_hidden=[10, 32, 1],
+    grid_size=5,
+    spline_order=3,
+)
 
-The importable package intentionally keeps runtime dependencies minimal so it can
-serve as a lightweight downstream dependency for research pipelines.
+x = torch.randn(128, 10)
+y = torch.randn(128, 1)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+criterion = torch.nn.MSELoss()
+
+for _ in range(100):
+    optimizer.zero_grad()
+    prediction = model(x)
+    loss = criterion(prediction, y) + 1e-4 * model.regularization_loss(
+        regularize_activation=1.0,
+        regularize_entropy=0.0,
+    )
+    loss.backward()
+    optimizer.step()
+
+with torch.no_grad():
+    prediction = model(torch.randn(8, 10))
+```
+
+For binary classification, use a one-output model with
+`torch.nn.BCEWithLogitsLoss`. For multiclass classification, use one output per
+class with `torch.nn.CrossEntropyLoss`.
+
+## API Overview
+
+The package exposes two classes:
+
+| Object | Purpose |
+| --- | --- |
+| `KANLinear` | A single KAN layer with base linear weights, spline weights, B-spline bases, optional spline scaling, and adaptive grid updates. |
+| `KAN` | A stack of `KANLinear` layers constructed from a list of hidden dimensions. |
+
+The main constructor is:
+
+```python
+KAN(
+    layers_hidden,
+    grid_size=5,
+    spline_order=3,
+    scale_noise=0.1,
+    scale_base=1.0,
+    scale_spline=1.0,
+    enable_standalone_scale_spline=True,
+    base_activation=torch.nn.SiLU,
+    grid_eps=0.02,
+    grid_range=(-1.0, 1.0),
+)
+```
+
+Important parameters:
+
+- `layers_hidden`: layer widths, including input and output dimensions, for
+  example `[input_dim, hidden_dim, output_dim]`.
+- `grid_size`: number of spline grid intervals.
+- `spline_order`: B-spline order, with `3` corresponding to cubic splines.
+- `base_activation`: activation applied before the base linear transformation.
+- `enable_standalone_scale_spline`: enables a learnable scale on spline terms.
+- `grid_eps`: interpolation between adaptive and uniform grids during grid
+  updates.
+- `grid_range`: initial spline-grid range.
+
+Inputs should generally be scaled into a range compatible with `grid_range`,
+especially when `update_grid=False`.
+
+## Regularisation
+
+`regularization_loss()` returns an L1-type penalty on spline weights, with an
+optional entropy term over the normalised spline-weight magnitudes.
+
+```python
+loss = task_loss + 1e-4 * model.regularization_loss(
+    regularize_activation=1.0,
+    regularize_entropy=0.0,
+)
+```
+
+This formulation is chosen to preserve the efficient matrix-multiplication
+implementation. It is not numerically identical to activation-based
+regularisation from the original KAN paper, which depends on expanded
+intermediate activations.
+
+## Grid Updates
+
+Each `KANLinear` layer supports adaptive grid updates:
+
+```python
+model(x, update_grid=True)
+```
+
+When `update_grid=True`, each layer updates its spline grid from the current
+batch before computing the layer output. This can be useful during training, but
+it mutates model state and is more expensive than a normal forward pass. Use it
+deliberately, for example periodically rather than at every inference call.
 
 ## Development
 
-Run the validation gate from the repository root:
+Run the local validation gate from the repository root:
 
 ```bash
 scripts/validate.sh
 ```
 
-The test suite is deterministic and intentionally favors unit-level numerical
-contracts over long convergence tests.
+The gate compiles source files, runs Ruff, runs the test suite with coverage,
+builds the package, checks package metadata, performs editable-install dry runs,
+and checks whitespace. The repository intentionally uses a pip/`pyproject.toml`
+workflow rather than PDM or a checked-in lockfile.
 
-This fork standardizes on pip plus `pyproject.toml` with a setuptools build
-backend. It does not use PDM or a checked-in lockfile. See `CONTRIBUTING.md` for
-the full contributor workflow.
-
-## Quick Start / Basic Usage
-
-Here's a minimal example of how to define, train, and use a KAN model from this library for a binary classification task:
-
-```python
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from efficient_kan import KAN # Ensure the library is installed
-
-# 1. Define the KAN model
-# layers_hidden should be a list like [input_dim, hidden1_dim, ..., output_dim]
-model = KAN(
-    layers_hidden=[10, 32, 1],  # Example: 10 inputs, 1 hidden layer (32 neurons), 1 output
-    grid_size=5,                # Number of grid intervals for splines
-    spline_order=3,             # Order of splines (e.g., 3 for cubic)
-    # Other parameters can be set here, see "Key KAN Constructor Parameters"
-)
-
-# Dummy data for demonstration
-X_train = torch.randn(100, 10)  # 100 samples, 10 features
-y_train = torch.randint(0, 2, (100, 1)).float() # 100 binary labels (0 or 1)
-
-# 2. Define optimizer and loss function
-optimizer = optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
-# For binary classification, BCEWithLogitsLoss is used as KAN outputs raw logits
-criterion = nn.BCEWithLogitsLoss() 
-
-# 3. Training loop
-num_epochs = 20  # Or a fixed number of steps
-regularization_strength = 1e-4 # Multiplier for KAN's internal regularization term
-
-for epoch in range(num_epochs):
-    model.train() # Set model to training mode
-    optimizer.zero_grad()
-    
-    output_logits = model(X_train) # Forward pass
-    
-    # Calculate main loss based on task (e.g., classification)
-    loss_main = criterion(output_logits, y_train)
-    
-    # Add KAN's internal regularization loss
-    # The regularization_loss() method itself has parameters:
-    # regularize_activation (default 1.0) and regularize_entropy (default 1.0)
-    loss_reg = model.regularization_loss() 
-    
-    total_loss = loss_main + regularization_strength * loss_reg
-    
-    total_loss.backward() # Backward pass
-    optimizer.step()      # Update model parameters
-    
-    if (epoch + 1) % 5 == 0:
-        print(f"Epoch {epoch+1}/{num_epochs}, Total Loss: {total_loss.item():.4f}, Criterion Loss: {loss_main.item():.4f}, Regularization Loss: {loss_reg.item():.4f}")
-
-# 4. Prediction (Inference)
-model.eval() # Set model to evaluation mode
-X_test = torch.randn(10, 10) # Dummy test data
-with torch.no_grad(): # Disable gradient calculations for inference
-    test_logits = model(X_test)
-    test_probabilities = torch.sigmoid(test_logits) # Convert logits to probabilities for binary classification
-
-print("\nTest Predictions (probabilities):")
-print(test_probabilities)
-```
-
-## Key `KAN` Constructor Parameters
-
-The main `KAN` class is initialized as `KAN(layers_hidden, grid_size=5, spline_order=3, ...)` and internally uses `KANLinear` layers. Key parameters include:
-
--   `layers_hidden` (list of ints): Defines the number of neurons in each layer, starting with input dimension and ending with output dimension. Example: `[input_dim, hidden1_dim, output_dim]`.
--   `grid_size` (int, default: 5): The number of grid intervals for the B-spline basis functions in each `KANLinear` layer.
--   `spline_order` (int, default: 3): The order of the B-spline (e.g., 3 for cubic splines).
--   `scale_noise` (float, default: 0.1): Scale of noise used for initializing spline weights.
--   `scale_base` (float, default: 1.0): Scale for base weight initialization.
--   `scale_spline` (float, default: 1.0): Scale for spline weight initialization.
--   `base_activation` (torch.nn.Module, default: `torch.nn.SiLU`): A base activation function applied to the input before the linear transformation part of a `KANLinear` layer.
--   `grid_eps` (float, default: 0.02): Controls the mixture between a uniform grid and a data-adaptive grid during `update_grid`. `0.0` means fully data-adaptive, `1.0` means fully uniform.
--   `grid_range` (list/tuple, default: `[-1, 1]`): The initial range for the spline grids.
--   `enable_standalone_scale_spline` (bool, default: `True`, for `KANLinear`): If `True`, includes an additional learnable scalar multiplier for each spline activation, similar to a feature in the original `pykan`. Setting to `False` can improve efficiency but might alter performance.
-
-Inputs should generally be scaled into a range compatible with the spline grid,
-especially if `update_grid=False`. If you call `model(x, update_grid=True)`, each
-layer mutates its grid based on the current batch; this is useful periodically
-during training but is more expensive than a normal forward pass.
-
-## Regularization
-
-This library implements L1-type regularization on the spline weights to encourage sparsity. To apply it during training, you must manually retrieve the regularization term using `model.regularization_loss()` and add it to your main loss function, scaled by a chosen strength factor:
-
-```python
-# Inside your training loop:
-loss_reg = model.regularization_loss(regularize_activation=1.0, regularize_entropy=1.0)
-# regularize_activation: coefficient for the L1 norm of spline weights
-# regularize_entropy: coefficient for the entropy of the (normalized) L1 norms
-
-total_loss = main_criterion_loss + your_reg_strength_multiplier * loss_reg
-```
-You can adjust `your_reg_strength_multiplier` to control the overall impact of this regularization. The internal `regularize_activation` and `regularize_entropy` parameters can also be tuned.
-
-The regularization implementation is finite when spline weights are zero. When
-entropy regularization is disabled with `regularize_entropy=0.0`, the entropy
-term is not evaluated.
-
-## Grid Update
-
-The `KANLinear` layers have an `update_grid(x)` method to adapt spline grids based on input data `x`. The main `KAN` model's `forward` method has an `update_grid=False` parameter. If set to `True` (e.g., `model(X_train, update_grid=True)`), it will call `layer.update_grid(x)` for each `KANLinear` layer during that forward pass. This can be done periodically during training if desired, similar to the original `pykan`'s grid update strategy.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contributor workflow and
+[CHANGELOG.md](./CHANGELOG.md) for notable changes.
 
 ## Citation
 
-This repository (`github.com/shawcharles/efficient-kan`) is a fork of an efficient KAN implementation (see original at [https://github.com/Blealtan/efficient-kan](https://github.com/Blealtan/efficient-kan) by @Blealtan). This specific version was utilized in the following research:
+If this package supports academic work, please cite the paper that motivated
+this maintained research implementation:
 
-*   Shaw, C. (2025). **“Model Risk in Machine-Learning Distributional IV Estimation”**  
-([arXiv:2506.12765](https://arxiv.org/abs/2506.12765)).
+```text
+Shaw, C. (2025). "Model Risk in Machine-Learning Distributional IV Estimation".
+arXiv:2506.12765.
+```
 
-If using this code, especially in work related to the KAN-D-IV-LATE estimator presented in the paper above, please cite the relevant paper and consider acknowledging the original `efficient-kan` library and the foundational `pykan` library by Liu et al. (2024).
+Please also cite the original KAN paper where appropriate:
+
+```text
+Liu, Z. et al. (2024). "KAN: Kolmogorov-Arnold Networks".
+arXiv:2404.19756.
+```
+
+## Acknowledgements
+
+This implementation is developed in conversation with the broader KAN software
+ecosystem. It draws on design ideas from
+[`Blealtan/efficient-kan`](https://github.com/Blealtan/efficient-kan), and the
+KAN methodology originates with the original
+[`pykan`](https://github.com/KindXiaoming/pykan) project and KAN paper by Liu
+et al. (2024).
