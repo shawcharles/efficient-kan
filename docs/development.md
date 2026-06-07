@@ -1,3 +1,9 @@
+---
+title: Development
+description: Contributor setup, validation commands, package constraints, and numerical-change policy.
+permalink: /development/
+---
+
 # Development
 
 This guide is for contributors working on the `efficient-kan` source tree.

@@ -1,3 +1,9 @@
+---
+title: Quickstart
+description: Minimal installation and usage examples for efficient-kan.
+permalink: /quickstart/
+---
+
 # Quickstart
 
 This guide shows the smallest useful patterns for installing `efficient-kan`

@@ -1,3 +1,9 @@
+---
+title: Adaptive Grid Updates
+description: Guidance for update_grid state mutation, reproducibility, and failure modes.
+permalink: /grid-updates/
+---
+
 # Adaptive Grid Updates
 
 `KANLinear.update_grid()` adapts a layer's spline grid to observed inputs.

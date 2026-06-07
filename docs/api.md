@@ -1,3 +1,9 @@
+---
+title: API Reference
+description: Public API reference for KAN and KANLinear.
+permalink: /api/
+---
+
 # API Reference
 
 `efficient-kan` exposes a deliberately small public API:

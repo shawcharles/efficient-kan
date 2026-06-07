@@ -1,3 +1,9 @@
+---
+title: Regularization
+description: Guidance for efficient-kan regularization_loss.
+permalink: /regularization/
+---
+
 # Regularization
 
 `regularization_loss()` returns an efficient spline-weight penalty that can be

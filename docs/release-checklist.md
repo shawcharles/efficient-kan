@@ -1,3 +1,9 @@
+---
+title: Release Checklist
+description: Local-only release readiness gate for efficient-kan.
+permalink: /release-checklist/
+---
+
 # Release Checklist
 
 This repository uses a local-only release gate. It intentionally does not use

@@ -1,3 +1,9 @@
+---
+title: Benchmarking
+description: Local benchmarking command and responsible comparison guidance.
+permalink: /benchmarking/
+---
+
 # Benchmarking
 
 `efficient-kan` includes a small local microbenchmark command for checking

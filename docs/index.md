@@ -12,8 +12,8 @@ title: efficient-kan Documentation
       deterministic tests, local validation, and provenance tooling.
     </p>
     <div class="hero-actions">
-      <a class="button primary" href="quickstart.html">Start with Quickstart</a>
-      <a class="button" href="api.html">Read the API</a>
+      <a class="button primary" href="quickstart/">Start with Quickstart</a>
+      <a class="button" href="api/">Read the API</a>
       <a class="button" href="https://github.com/shawcharles/efficient-kan">GitHub</a>
     </div>
   </div>
@@ -40,7 +40,7 @@ title: efficient-kan Documentation
   </div>
   <div class="card-grid">
     <article class="doc-card feature">
-      <h3><a href="quickstart.html">Quickstart</a></h3>
+      <h3><a href="quickstart/">Quickstart</a></h3>
       <p>
         Install commands and minimal examples for regression, binary
         classification, multiclass classification, and direct <code>KANLinear</code>
@@ -48,7 +48,7 @@ title: efficient-kan Documentation
       </p>
     </article>
     <article class="doc-card feature">
-      <h3><a href="api.html">API Reference</a></h3>
+      <h3><a href="api/">API Reference</a></h3>
       <p>
         Public constructors, tensor shapes, return values, mutating methods,
         state tensors, and expected errors.
@@ -64,28 +64,28 @@ title: efficient-kan Documentation
   </div>
   <div class="card-grid">
     <article class="doc-card">
-      <h3><a href="grid-updates.html">Grid Updates</a></h3>
+      <h3><a href="grid-updates/">Grid Updates</a></h3>
       <p>
         How <code>update_grid()</code> mutates state, when to use it, when to
         avoid it, and how to handle degenerate batches.
       </p>
     </article>
     <article class="doc-card">
-      <h3><a href="regularization.html">Regularization</a></h3>
+      <h3><a href="regularization/">Regularization</a></h3>
       <p>
         The efficient spline-weight penalty, how it differs from
         activation-based KAN regularization, and objective examples.
       </p>
     </article>
     <article class="doc-card">
-      <h3><a href="reproducibility.html">Reproducibility</a></h3>
+      <h3><a href="reproducibility/">Reproducibility</a></h3>
       <p>
         Seeds, PyTorch version sensitivity, provenance commands, and downstream
         artifact expectations.
       </p>
     </article>
     <article class="doc-card">
-      <h3><a href="benchmarking.html">Benchmarking</a></h3>
+      <h3><a href="benchmarking/">Benchmarking</a></h3>
       <p>
         Local benchmark commands, measured operations, limitations, and
         same-machine comparison guidance.
@@ -101,14 +101,14 @@ title: efficient-kan Documentation
   </div>
   <div class="card-grid">
     <article class="doc-card">
-      <h3><a href="development.html">Development</a></h3>
+      <h3><a href="development/">Development</a></h3>
       <p>
         Editable install, tests, linting, coverage, package constraints,
         dependency policy, and numerical-change process.
       </p>
     </article>
     <article class="doc-card">
-      <h3><a href="release-checklist.html">Release Checklist</a></h3>
+      <h3><a href="release-checklist/">Release Checklist</a></h3>
       <p>
         Local-only release gate, version updates, changelog expectations, build
         checks, wheel smoke tests, provenance, and the no-CI/CD assumption.

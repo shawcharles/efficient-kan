@@ -1,3 +1,9 @@
+---
+title: Documentation Index
+description: Index for efficient-kan documentation.
+permalink: /docs-index/
+---
+
 # efficient-kan Documentation
 
 `efficient-kan` is a compact pure-PyTorch implementation of

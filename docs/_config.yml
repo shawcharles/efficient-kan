@@ -1,11 +1,37 @@
 title: efficient-kan
-description: Pure-PyTorch Kolmogorov-Arnold Network layers for reproducible research workflows.
+email: charles@charlesshaw.net
+author: Charles Shaw
+description: >-
+  Pure-PyTorch Kolmogorov-Arnold Network layers for reproducible research workflows.
 url: "https://shawcharles.github.io"
 baseurl: "/efficient-kan"
+repo: "https://github.com/shawcharles/efficient-kan"
+github_user: "shawcharles"
+github_repo: "efficient-kan"
+github_branch: "main"
 repository: shawcharles/efficient-kan
+color: "#0f766e"
+tag_color: primary
+accentColor: teal
+themeColor: teal
+fixedNav: "true"
+feedback: false
+allow_search: true
+markdown: kramdown
 
 defaults:
   - scope:
       path: ""
     values:
-      layout: default
+      layout: page
+
+version_params:
+  versioning: false
+  version_menu: ""
+  version_dir: Archive
+  tocversion_dir: versions
+  latest: Current
+  allow_search: false
+  search_versions: []
+  versions:
+    - Current

@@ -1,3 +1,9 @@
+---
+title: Reproducibility
+description: Seeds, PyTorch sensitivity, provenance, and downstream artifact expectations.
+permalink: /reproducibility/
+---
+
 # Reproducibility
 
 `efficient-kan` is often used as a dependency inside downstream research
