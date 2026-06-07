@@ -356,11 +356,11 @@ class KANLinear(torch.nn.Module):
         regularize_activation: float = 1.0,
         regularize_entropy: float = 1.0,
     ) -> torch.Tensor:
-        """Return the efficient spline-weight regularization penalty.
+        """Return the efficient spline-weight regularisation penalty.
 
         The activation term is the sum of mean absolute spline-weight magnitudes
         over output/input feature pairs. The optional entropy term is computed
-        from those normalized magnitudes. This preserves the memory-efficient
+        from those normalised magnitudes. This preserves the memory-efficient
         implementation and is not identical to regularizing expanded per-sample
         spline activations.
         """
@@ -437,7 +437,7 @@ class KAN(torch.nn.Module):
         regularize_activation: float = 1.0,
         regularize_entropy: float = 1.0,
     ) -> torch.Tensor:
-        """Sum regularization penalties across all KAN layers."""
+        """Sum regularisation penalties across all KAN layers."""
         return sum(
             layer.regularization_loss(regularize_activation, regularize_entropy)
             for layer in self.layers

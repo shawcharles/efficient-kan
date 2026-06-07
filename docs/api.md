@@ -58,9 +58,9 @@ KANLinear(
 | `out_features` | Number of output features. | Positive integer. |
 | `grid_size` | Number of spline grid intervals. | Positive integer. |
 | `spline_order` | B-spline order. `3` corresponds to cubic splines. | Positive integer. |
-| `scale_noise` | Scale for random spline initialization noise. | Finite scalar. |
-| `scale_base` | Multiplicative scale applied to initialized base weights. | Finite scalar. |
-| `scale_spline` | Multiplicative scale applied to initialized spline terms. | Finite scalar. |
+| `scale_noise` | Scale for random spline initialisation noise. | Finite scalar. |
+| `scale_base` | Multiplicative scale applied to initialised base weights. | Finite scalar. |
+| `scale_spline` | Multiplicative scale applied to initialised spline terms. | Finite scalar. |
 | `enable_standalone_scale_spline` | Whether to use a separate learnable scale for spline coefficients. | Boolean-like value. |
 | `base_activation` | PyTorch module class used before the base linear transformation. | Callable module class with a zero-argument constructor. |
 | `grid_eps` | Interpolation between adaptive and uniform grid updates. `0` is purely adaptive; `1` is purely uniform. | Finite scalar in `[0, 1]`. |
@@ -158,7 +158,7 @@ Solves B-spline coefficients for sample values using `torch.linalg.lstsq`.
 
 When the supplied basis has enough rank, the result interpolates the supplied
 sample values up to numerical solve tolerance. Otherwise, the result follows
-PyTorch's least-squares or minimum-norm behavior for `torch.linalg.lstsq`.
+PyTorch's least-squares or minimum-norm behaviour for `torch.linalg.lstsq`.
 
 Expected errors:
 
@@ -248,10 +248,10 @@ penalty = layer.regularization_loss(
 )
 ```
 
-Returns the efficient spline-weight regularization penalty as a scalar tensor.
+Returns the efficient spline-weight regularisation penalty as a scalar tensor.
 
 The activation component is based on mean absolute spline-weight magnitudes.
-The optional entropy component is computed from the normalized magnitudes. This
+The optional entropy component is computed from the normalised magnitudes. This
 preserves the memory-efficient implementation and is not identical to
 regularizing expanded per-sample spline activations.
 
@@ -301,9 +301,9 @@ All constructor arguments except `layers_hidden` are passed through to each
 | `layers_hidden` | Layer widths, including input and output widths. | At least two entries. Each adjacent pair must define a valid `KANLinear`. |
 | `grid_size` | Number of spline grid intervals per layer. | Positive integer. |
 | `spline_order` | B-spline order per layer. | Positive integer. |
-| `scale_noise` | Scale for random spline initialization noise. | Finite scalar. |
-| `scale_base` | Multiplicative scale applied to initialized base weights. | Finite scalar. |
-| `scale_spline` | Multiplicative scale applied to initialized spline terms. | Finite scalar. |
+| `scale_noise` | Scale for random spline initialisation noise. | Finite scalar. |
+| `scale_base` | Multiplicative scale applied to initialised base weights. | Finite scalar. |
+| `scale_spline` | Multiplicative scale applied to initialised spline terms. | Finite scalar. |
 | `enable_standalone_scale_spline` | Whether each layer uses a separate learnable spline scale. | Boolean-like value. |
 | `base_activation` | PyTorch module class used before each base linear transformation. | Callable module class with a zero-argument constructor. |
 | `grid_eps` | Interpolation between adaptive and uniform grid updates. | Finite scalar in `[0, 1]`. |
@@ -388,6 +388,6 @@ Returns the sum of `regularization_loss()` across all layers.
 - Inputs to `b_splines()`, `curve2coeff()`, and `update_grid()` must be finite.
 - `forward()` accepts leading dimensions and restores them on output.
 - `update_grid()` is an explicit state mutation.
-- `grid` is required to be strictly increasing for valid spline behavior.
-- `curve2coeff()` delegates numerical solve behavior to `torch.linalg.lstsq`.
+- `grid` is required to be strictly increasing for valid spline behaviour.
+- `curve2coeff()` delegates numerical solve behaviour to `torch.linalg.lstsq`.
 - The importable package runtime dependency is PyTorch.

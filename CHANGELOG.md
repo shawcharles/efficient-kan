@@ -12,10 +12,10 @@ semantic versioning once releases are cut.
 ### Added
 
 - Added local agent guidance for maintainers; `AGENTS.md` remains ignored and
-  untracked rather than part of release artifacts.
+  untracked rather than part of release artefacts.
 - Added `efficient_kan.__version__` and bumped package metadata to `0.2.0`.
 - Added deterministic tests for forward shapes, spline bases, coefficient
-  interpolation, grid updates, regularization, initialization scaling, state
+  interpolation, grid updates, regularisation, initialisation scaling, state
   dict round trips, and a tiny training smoke.
 - Added deterministic numerical invariant tests for B-spline non-negativity and
   partition of unity, `curve2coeff()` reconstruction, monotone adaptive grids,
@@ -49,7 +49,7 @@ semantic versioning once releases are cut.
 - MNIST example now uses a `main()` function and import-safe module guard.
 - `KAN` now forwards the `enable_standalone_scale_spline` option to its
   `KANLinear` layers.
-- Initialization scale parameters now scale initialized tensors directly instead
+- Initialisation scale parameters now scale initialised tensors directly instead
   of being passed as the Kaiming negative-slope argument.
 - Public documentation now describes constructor ranges, shape semantics,
   adaptive-grid mutation, numerical invariants, and local benchmark usage.

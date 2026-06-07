@@ -71,18 +71,18 @@ model = KAN(
 x = torch.randn(128, 10)
 y = torch.randn(128, 1)
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+optimiser = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
 criterion = torch.nn.MSELoss()
 
 for _ in range(100):
-    optimizer.zero_grad()
+    optimiser.zero_grad()
     prediction = model(x)
     loss = criterion(prediction, y) + 1e-4 * model.regularization_loss(
         regularize_activation=1.0,
         regularize_entropy=0.0,
     )
     loss.backward()
-    optimizer.step()
+    optimiser.step()
 
 with torch.no_grad():
     prediction = model(torch.randn(8, 10))
@@ -125,7 +125,7 @@ Important parameters:
 - `grid_size`: positive number of spline grid intervals.
 - `spline_order`: positive B-spline order, with `3` corresponding to cubic
   splines.
-- `scale_noise`, `scale_base`, `scale_spline`: finite scalar initialization
+- `scale_noise`, `scale_base`, `scale_spline`: finite scalar initialisation
   scales.
 - `base_activation`: activation applied before the base linear transformation.
 - `enable_standalone_scale_spline`: enables a learnable scale on spline terms.

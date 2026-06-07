@@ -12,7 +12,7 @@ and image assets derived from
 of the Docsy documentation theme.
 
 `vsoch/docsy-jekyll` is distributed under the Apache License 2.0. The vendored
-license and copyright notice are included in this documentation source tree:
+licence and copyright notice are included in this documentation source tree:
 
 - [DOCSY-JEKYLL-LICENSE]({{ site.baseurl }}/DOCSY-JEKYLL-LICENSE)
 - [DOCSY-JEKYLL-COPYRIGHT]({{ site.baseurl }}/DOCSY-JEKYLL-COPYRIGHT)

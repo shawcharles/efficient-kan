@@ -58,7 +58,7 @@ Call out:
 - documentation additions;
 - dependency changes.
 
-If a change intentionally alters numerical behavior, say so directly.
+If a change intentionally alters numerical behaviour, say so directly.
 
 ## 4. Run the Local Validation Gate
 
@@ -70,7 +70,7 @@ scripts/validate.sh
 
 The gate currently:
 
-- removes stale build artifacts;
+- removes stale build artefacts;
 - compiles `src`, `tests`, `examples`, and `scripts`;
 - runs Ruff;
 - runs the test suite;
@@ -87,7 +87,7 @@ The gate currently:
 - dry-runs editable installs for base and dev extras;
 - runs `git diff --check`.
 
-Do not publish release artifacts unless this gate passes.
+Do not publish release artefacts unless this gate passes.
 
 ## 5. Manual Build and Metadata Checks
 
@@ -100,7 +100,7 @@ python -m build
 python -m twine check dist/*
 ```
 
-Expected artifacts for version `0.2.0` are:
+Expected artefacts for version `0.2.0` are:
 
 ```text
 dist/efficient_kan-0.2.0.tar.gz
@@ -151,7 +151,7 @@ Confirm:
 - import path is the intended source checkout or installed package;
 - Python and PyTorch versions are recorded.
 
-For final release artifacts, prefer a clean git status.
+For final release artefacts, prefer a clean git status.
 
 ## 8. Package Contents
 
@@ -172,7 +172,7 @@ The source distribution should not include:
 
 - `handoff/`;
 - `.planning/`;
-- build artifacts;
+- build artefacts;
 - local caches;
 - ignored agent-local files.
 
@@ -201,5 +201,5 @@ Before tagging or publishing:
 - Is `CHANGELOG.md` current?
 - Do version strings agree?
 - Is provenance captured?
-- Are numerical behavior changes documented?
+- Are numerical behaviour changes documented?
 - Are runtime dependencies still limited to PyTorch?

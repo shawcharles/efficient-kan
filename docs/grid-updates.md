@@ -48,7 +48,7 @@ It does not mutate:
 
 - `base_weight`;
 - `spline_scaler`;
-- optimizer state.
+- optimiser state.
 
 When standalone spline scaling is enabled, the coefficient refit accounts for
 `spline_scaler`. If a scaler entry is zero, the updated unscaled
@@ -84,7 +84,7 @@ this convention; they require explicit two-dimensional inputs.
 Use grid updates when the spline grid should adapt to the empirical input
 distribution seen during training. Common uses include:
 
-- an initial adaptation pass before ordinary optimization;
+- an initial adaptation pass before ordinary optimisation;
 - periodic updates during early training;
 - research experiments where adaptive grids are part of the estimator or model
   specification.
@@ -99,7 +99,7 @@ from efficient_kan import KAN
 torch.manual_seed(123)
 
 model = KAN([3, 16, 1], grid_size=5, spline_order=3)
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+optimiser = torch.optim.AdamW(model.parameters(), lr=1e-3)
 criterion = torch.nn.MSELoss()
 
 x = torch.rand(256, 3) * 2.0 - 1.0
@@ -111,11 +111,11 @@ for step in range(200):
     if step in {0, 25, 50}:
         model(x, update_grid=True)
 
-    optimizer.zero_grad()
+    optimiser.zero_grad()
     prediction = model(x)
     loss = criterion(prediction, y)
     loss.backward()
-    optimizer.step()
+    optimiser.step()
 ```
 
 This pattern makes grid adaptation explicit and keeps most training steps as

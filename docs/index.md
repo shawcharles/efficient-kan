@@ -59,8 +59,8 @@ title: efficient-kan Documentation
 
 <section>
   <div class="section-heading">
-    <h2>Numerical Behavior</h2>
-    <p>Document the modeling choices that matter for statistical use.</p>
+    <h2>Numerical Behaviour</h2>
+    <p>Document the modelling choices that matter for statistical use.</p>
   </div>
   <div class="card-grid">
     <article class="doc-card">
@@ -71,17 +71,17 @@ title: efficient-kan Documentation
       </p>
     </article>
     <article class="doc-card">
-      <h3><a href="regularization/">Regularization</a></h3>
+      <h3><a href="regularization/">Regularisation</a></h3>
       <p>
         The efficient spline-weight penalty, how it differs from
-        activation-based KAN regularization, and objective examples.
+        activation-based KAN regularisation, and objective examples.
       </p>
     </article>
     <article class="doc-card">
       <h3><a href="reproducibility/">Reproducibility</a></h3>
       <p>
         Seeds, PyTorch version sensitivity, provenance commands, and downstream
-        artifact expectations.
+        artefact expectations.
       </p>
     </article>
     <article class="doc-card">

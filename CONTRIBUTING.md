@@ -64,15 +64,15 @@ generate fresh research evidence from a new commit. Treat the output of
 
 ## Numerical Contract Changes
 
-Treat spline bases, coefficient solves, adaptive grid updates, initialization
-scales, and regularization semantics as public behavior. If a change affects one
+Treat spline bases, coefficient solves, adaptive grid updates, initialisation
+scales, and regularisation semantics as public behaviour. If a change affects one
 of those contracts:
 
 - document the intended semantic change in `CHANGELOG.md`;
-- add deterministic tests that would fail under the old buggy behavior when
+- add deterministic tests that would fail under the old buggy behaviour when
   feasible;
 - update README API notes if user-facing input ranges, shape semantics, or
-  mutation behavior change;
+  mutation behaviour change;
 - keep runtime dependencies limited to PyTorch unless the maintainer explicitly
   approves an expansion.
 
@@ -122,7 +122,7 @@ and the local `scripts/` wrappers. The wheel should include the package modules
 and console entry points for `efficient-kan-provenance` and
 `efficient-kan-benchmark`.
 
-For a non-installing artifact inspection:
+For a non-installing artefact inspection:
 
 ```bash
 python - <<'PY'
@@ -144,4 +144,4 @@ with zipfile.ZipFile(wheel) as archive:
 PY
 ```
 
-Do not publish release artifacts until the local validation gate passes.
+Do not publish release artefacts until the local validation gate passes.

@@ -91,11 +91,11 @@ The benchmark does not measure:
 
 - end-to-end model training throughput;
 - data loading or preprocessing;
-- optimizer step time;
+- optimiser step time;
 - convergence speed;
 - estimator accuracy, bias, variance, or coverage;
 - memory peak usage;
-- distributed or multi-GPU behavior;
+- distributed or multi-GPU behaviour;
 - performance across a full model-size grid;
 - downstream simulation pipeline performance.
 
@@ -170,7 +170,7 @@ python scripts/benchmark.py --device cuda --dtype float32
 
 CUDA timings can be affected by:
 
-- GPU model and clock behavior;
+- GPU model and clock behaviour;
 - driver and CUDA runtime;
 - PyTorch CUDA build;
 - other GPU processes;
@@ -194,7 +194,7 @@ or obvious performance regressions, but it is not enough for careful
 performance claims.
 
 Use non-quick runs for comparisons that will be reported in issues, release
-notes, or downstream research artifacts.
+notes, or downstream research artefacts.
 
 ## Interpreting Results
 
@@ -219,4 +219,4 @@ Avoid reporting a single timing without context.
 
 This benchmark is for the core `efficient-kan` package. Parallel simulation
 performance belongs in downstream statistical projects where the data-generating
-process, estimator, replication structure, and artifact layout are defined.
+process, estimator, replication structure, and artefact layout are defined.

@@ -48,7 +48,7 @@ wrappers live in `scripts/`; reusable CLI logic lives in package modules.
 ## Local Validation
 
 Run the full local gate before release candidates and before downstream
-projects generate fresh research artifacts:
+projects generate fresh research artefacts:
 
 ```bash
 scripts/validate.sh
@@ -88,7 +88,7 @@ Test guidance:
 - avoid long convergence tests in the default suite;
 - test tensor shapes and finite values;
 - test gradients for differentiable paths;
-- test state-dict round trips when state behavior changes;
+- test state-dict round trips when state behaviour changes;
 - test invalid inputs for public APIs;
 - pin numerical contracts directly when possible.
 
@@ -124,27 +124,27 @@ Keep the package focused:
 
 `KANLinear` and `KAN` should continue to behave like ordinary PyTorch modules.
 Buffers and parameters should move through normal `.to(device)` and dtype
-conversion behavior.
+conversion behaviour.
 
 ## Numerical Contract Changes
 
-Treat the following as public numerical behavior:
+Treat the following as public numerical behaviour:
 
 - spline basis construction;
 - coefficient solves via `torch.linalg.lstsq`;
-- initialization scales;
+- initialisation scales;
 - shape semantics;
 - adaptive grid updates;
-- regularization semantics;
-- dtype and device behavior;
-- mutation behavior of `update_grid()`.
+- regularisation semantics;
+- dtype and device behaviour;
+- mutation behaviour of `update_grid()`.
 
-When proposing a behavior-changing numerical fix:
+When proposing a behaviour-changing numerical fix:
 
-1. Describe the current behavior.
+1. Describe the current behaviour.
 2. Explain why it is wrong or unsafe.
-3. State the intended new behavior.
-4. Add deterministic tests that fail under the old behavior when feasible.
+3. State the intended new behaviour.
+4. Add deterministic tests that fail under the old behaviour when feasible.
 5. Update relevant docs.
 6. Add a changelog entry.
 7. Run the local validation gate.
@@ -156,7 +156,7 @@ makes downstream research changes easier to audit.
 
 Keep public APIs backward compatible unless a change fixes a documented bug or
 rejects an invalid state. Prefer explicit validation errors over silent
-behavior changes.
+behaviour changes.
 
 If an incompatibility is necessary, document it in:
 
@@ -183,20 +183,20 @@ implemented clearly with PyTorch or the Python standard library.
 
 ## Documentation
 
-Update documentation when user-facing behavior changes.
+Update documentation when user-facing behaviour changes.
 
 Use:
 
 - `README.md` for the concise overview;
 - `docs/quickstart.md` for runnable examples;
 - `docs/api.md` for public API details;
-- topical docs for numerical contracts, grid updates, regularization,
+- topical docs for numerical contracts, grid updates, regularisation,
   benchmarking, reproducibility, and release process;
 - `CHANGELOG.md` for release-facing changes.
 
-Keep documentation honest about numerical behavior. Do not describe benchmark
+Keep documentation honest about numerical behaviour. Do not describe benchmark
 results, convergence, or estimator performance as general facts unless they are
-backed by a specific artifact and context.
+backed by a specific artefact and context.
 
 ## Provenance and Benchmarks
 

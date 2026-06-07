@@ -68,11 +68,11 @@ model = KAN(
     spline_order=3,
 )
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+optimiser = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
 criterion = torch.nn.MSELoss()
 
 for step in range(200):
-    optimizer.zero_grad()
+    optimiser.zero_grad()
     prediction = model(x)
     task_loss = criterion(prediction, y)
     penalty = model.regularization_loss(
@@ -81,7 +81,7 @@ for step in range(200):
     )
     loss = task_loss + 1e-4 * penalty
     loss.backward()
-    optimizer.step()
+    optimiser.step()
 
 model.eval()
 with torch.no_grad():
@@ -106,15 +106,15 @@ x = torch.rand(n, 2) * 2.0 - 1.0
 target = ((x[:, 0] ** 2 + x[:, 1] ** 2) < 0.5).float().unsqueeze(1)
 
 model = KAN([2, 12, 1], grid_size=5, spline_order=3)
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+optimiser = torch.optim.AdamW(model.parameters(), lr=1e-3)
 criterion = torch.nn.BCEWithLogitsLoss()
 
 for step in range(200):
-    optimizer.zero_grad()
+    optimiser.zero_grad()
     logits = model(x)
     loss = criterion(logits, target)
     loss.backward()
-    optimizer.step()
+    optimiser.step()
 
 model.eval()
 with torch.no_grad():
@@ -145,15 +145,15 @@ target[(x[:, 0] >= -0.25) & (x[:, 1] < 0.25)] = 1
 target[(x[:, 0] >= -0.25) & (x[:, 1] >= 0.25)] = 2
 
 model = KAN([2, 16, 3], grid_size=5, spline_order=3)
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+optimiser = torch.optim.AdamW(model.parameters(), lr=1e-3)
 criterion = torch.nn.CrossEntropyLoss()
 
 for step in range(200):
-    optimizer.zero_grad()
+    optimiser.zero_grad()
     logits = model(x)
     loss = criterion(logits, target)
     loss.backward()
-    optimizer.step()
+    optimiser.step()
 
 model.eval()
 with torch.no_grad():
