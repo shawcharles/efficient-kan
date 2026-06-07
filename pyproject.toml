@@ -1,9 +1,10 @@
 [project]
 name = "efficient-kan"
-version = "0.1.0"
+version = "0.2.0"
 description = "An efficient pure-PyTorch implementation of Kolmogorov-Arnold Network (KAN)."
 authors = [
     {name = "Blealtan Cao", email = "blealtan@outlook.com"},
+    {name = "Charles Shaw", email = "charles@charlesshaw.net"},
 ]
 dependencies = [
     "torch>=2.3.0",
@@ -11,6 +12,25 @@ dependencies = [
 requires-python = ">=3.10"
 readme = "README.md"
 license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/shawcharles/efficient-kan"
+Repository = "https://github.com/shawcharles/efficient-kan"
+Issues = "https://github.com/shawcharles/efficient-kan/issues"
+Changelog = "https://github.com/shawcharles/efficient-kan/blob/main/CHANGELOG.md"
+
+[project.scripts]
+efficient-kan-benchmark = "efficient_kan.benchmark:main"
+efficient-kan-provenance = "efficient_kan.provenance:main"
 
 [project.optional-dependencies]
 dev = [
@@ -42,6 +62,10 @@ target-version = "py310"
 
 [tool.coverage.run]
 source = ["efficient_kan"]
+omit = [
+    "src/efficient_kan/benchmark.py",
+    "src/efficient_kan/provenance.py",
+]
 
 [tool.coverage.report]
 fail_under = 90

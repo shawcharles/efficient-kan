@@ -25,6 +25,7 @@ standard PyTorch linear algebra.
 - Adaptive spline grid updates through `update_grid()`.
 - Local validation with tests, linting, coverage, build checks, and metadata
   checks.
+- Local provenance reporting for downstream research manifests.
 
 This repository is also the KAN dependency used in:
 
@@ -121,16 +122,67 @@ Important parameters:
 
 - `layers_hidden`: layer widths, including input and output dimensions, for
   example `[input_dim, hidden_dim, output_dim]`.
-- `grid_size`: number of spline grid intervals.
-- `spline_order`: B-spline order, with `3` corresponding to cubic splines.
+- `grid_size`: positive number of spline grid intervals.
+- `spline_order`: positive B-spline order, with `3` corresponding to cubic
+  splines.
+- `scale_noise`, `scale_base`, `scale_spline`: finite scalar initialization
+  scales.
 - `base_activation`: activation applied before the base linear transformation.
 - `enable_standalone_scale_spline`: enables a learnable scale on spline terms.
 - `grid_eps`: interpolation between adaptive and uniform grids during grid
-  updates.
-- `grid_range`: initial spline-grid range.
+  updates. It must be finite and in `[0, 1]`.
+- `grid_range`: two increasing finite values defining the initial spline-grid
+  range.
 
 Inputs should generally be scaled into a range compatible with `grid_range`,
 especially when `update_grid=False`.
+
+### Shape Semantics
+
+`KANLinear.forward()` and `KAN.forward()` accept tensors whose last dimension is
+the input feature dimension. Any leading dimensions are treated as batch-like
+dimensions and are restored on output:
+
+```python
+model = KAN([3, 4, 2])
+x = torch.randn(5, 6, 3)
+assert model(x).shape == (5, 6, 2)
+```
+
+Mutating grid updates follow the same convention:
+
+```python
+out = model(x, update_grid=True)
+```
+
+The lower-level `KANLinear.b_splines()` and `KANLinear.curve2coeff()` methods
+operate on explicit two-dimensional tensors with shape
+`(batch_size, in_features)`.
+
+### Numerical Contracts
+
+- Spline grids are strictly increasing after valid adaptive updates.
+- `b_splines()` returns finite basis values. For in-range points on a valid
+  grid, the basis is non-negative and sums to one up to floating-point
+  tolerance.
+- `curve2coeff()` uses `torch.linalg.lstsq`; it interpolates when the supplied
+  spline basis has enough rank, otherwise it returns PyTorch's least-squares or
+  minimum-norm solution.
+- `update_grid()` mutates `grid` and `spline_weight`, then refits spline
+  coefficients to preserve the spline contribution at the supplied samples up
+  to numerical solve tolerance. This preservation accounts for
+  `enable_standalone_scale_spline=True`.
+- Inputs to numerical solve and grid-update paths must be finite. `margin` in
+  `update_grid()` must be a finite positive scalar.
+- Pure adaptive updates with `grid_eps=0` require enough variation in each
+  feature to produce a strictly increasing grid. Degenerate batches fail fast
+  before mutating model state.
+
+KAN splines extrapolate outside the initial `grid_range` using the extended knot
+grid. For stable research workflows, scale features into a range compatible with
+the active grid and treat adaptive updates as explicit state mutation. A common
+training pattern is to update grids periodically during early training and use
+ordinary forward passes for evaluation.
 
 ## Regularisation
 
@@ -171,9 +223,67 @@ scripts/validate.sh
 ```
 
 The gate compiles source files, runs Ruff, runs the test suite with coverage,
-builds the package, checks package metadata, performs editable-install dry runs,
-and checks whitespace. The repository intentionally uses a pip/`pyproject.toml`
-workflow rather than PDM or a checked-in lockfile.
+compiles scripts, runs the benchmark smoke check, emits a provenance smoke
+report, builds the package, checks package metadata, performs editable-install
+dry runs, and checks whitespace. This local gate is the authoritative readiness
+check for the repository; the project intentionally does not use CI/CD or
+hosted workflow files. The repository uses a pip/`pyproject.toml` workflow
+rather than PDM or a checked-in lockfile.
+
+For a lighter local performance smoke check:
+
+```bash
+python scripts/benchmark.py --quick
+```
+
+Installed distributions also expose the same benchmark as a console command:
+
+```bash
+efficient-kan-benchmark --quick
+```
+
+The benchmark uses `torch.utils.benchmark` and reports local timings for
+`KANLinear.forward()`, full `KAN.forward()`, a backward pass, `update_grid()`,
+and `regularization_loss()`. Results depend on the PyTorch version, BLAS or CUDA
+backend, device, dtype, and model dimensions, so downstream projects should
+record their own benchmark context when performance matters.
+
+For machine-readable local provenance:
+
+```bash
+python scripts/provenance.py --json
+```
+
+Installed distributions expose the same provenance reporter as:
+
+```bash
+efficient-kan-provenance --json
+```
+
+The JSON report includes the package version, git commit, dirty status, Python
+version, platform, PyTorch version, CUDA availability/version, and package
+import path. By default, the script reports the package resolved by the active
+Python environment and falls back to a checkout `src/` tree only when the
+package is otherwise unavailable. Use `--source-checkout` from the source
+wrapper when you deliberately want to report this checkout's source tree:
+
+```bash
+python scripts/provenance.py --json --source-checkout
+```
+
+For the installed console command, pass `--checkout-root` when source-checkout
+provenance should come from a checkout other than the current git repository:
+
+```bash
+efficient-kan-provenance --json --source-checkout --checkout-root /path/to/efficient-kan
+```
+
+The JSON separates `package` import metadata from `source_checkout` metadata so
+installed distributions and local checkouts are not confused. Downstream
+research manifests should record at least the `efficient-kan` commit SHA, dirty
+status, package version, import mode/path, Python version, PyTorch version,
+device/CUDA context, validation command, and validation date before generating
+fresh simulation or empirical evidence.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contributor workflow and
 [CHANGELOG.md](./CHANGELOG.md) for notable changes.
