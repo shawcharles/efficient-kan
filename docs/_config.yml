@@ -1,10 +1,7 @@
 title: efficient-kan
 description: Pure-PyTorch Kolmogorov-Arnold Network layers for reproducible research workflows.
-theme: jekyll-theme-minimal
-show_downloads: true
 url: "https://shawcharles.github.io"
 baseurl: "/efficient-kan"
-
 repository: shawcharles/efficient-kan
 
 defaults:

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a class="brand" href="{{ '/' | relative_url }}">efficient-kan</a>
+        <div class="nav-links">
+          <a href="{{ '/quickstart.html' | relative_url }}">Quickstart</a>
+          <a href="{{ '/api.html' | relative_url }}">API</a>
+          <a href="{{ '/reproducibility.html' | relative_url }}">Reproducibility</a>
+          <a href="https://github.com/shawcharles/efficient-kan">GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>{{ site.title }}</strong>
+        <span>Pure-PyTorch KAN layers for reproducible research workflows.</span>
+      </div>
+      <a href="https://github.com/{{ site.repository }}">View on GitHub</a>
+    </footer>
+  </body>
+</html>

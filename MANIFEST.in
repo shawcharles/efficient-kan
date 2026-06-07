@@ -7,7 +7,7 @@ include .gitignore
 recursive-include scripts *.py *.sh
 recursive-include tests *.py
 recursive-include examples *.py
-recursive-include docs *.md *.yml
+recursive-include docs *.md *.yml *.html *.scss
 prune handoff
 prune build
 prune dist

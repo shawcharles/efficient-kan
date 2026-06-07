@@ -32,6 +32,8 @@ with tarfile.open(sdist) as archive:
     assert any(name.endswith("scripts/benchmark.py") for name in names)
     assert any(name.endswith("docs/index.md") for name in names)
     assert any(name.endswith("docs/_config.yml") for name in names)
+    assert any(name.endswith("docs/_layouts/default.html") for name in names)
+    assert any(name.endswith("docs/assets/css/style.scss") for name in names)
     assert not any("/handoff/" in name for name in names)
 
 with zipfile.ZipFile(wheel) as archive:
