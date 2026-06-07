@@ -2,12 +2,12 @@
 
 **Note:** This repository (`github.com/shawcharles/efficient-kan`) is a fork of an efficient implementation of Kolmogorov-Arnold Networks (KAN), adapted and utilized for the analysis presented in:
 
-*   Shaw, C. (2025). **“Rethinking Distributional IVs: KAN-Powered D-IV-LATE & Model Choice”**  
+*   Shaw, C. (2025). **“Model Risk in Machine-Learning Distributional IV Estimation”**  
 ([arXiv:2506.12765](https://arxiv.org/abs/2506.12765)). *(https://github.com/shawcharles/kan-d-iv-late)*
 
 The original `efficient-kan` library (on which this fork is based) can be found at [https://github.com/Blealtan/efficient-kan](https://github.com/Blealtan/efficient-kan) (by @Blealtan). The original KAN implementation (`pykan`) is available [here](https://github.com/KindXiaoming/pykan).
 
-This README combines information from the original `efficient-kan` README with added usage examples and context relevant to its application in the aforementioned papers.
+This README combines information from the original `efficient-kan` README with added usage examples and context relevant to its application in the paper above.
 
 ---
 
@@ -191,7 +191,7 @@ The `KANLinear` layers have an `update_grid(x)` method to adapt spline grids bas
 
 This repository (`github.com/shawcharles/efficient-kan`) is a fork of an efficient KAN implementation (see original at [https://github.com/Blealtan/efficient-kan](https://github.com/Blealtan/efficient-kan) by @Blealtan). This specific version was utilized in the following research:
 
-*   Shaw, C. (2025). **“Rethinking Distributional IVs: KAN-Powered D-IV-LATE & Model Choice”**  
+*   Shaw, C. (2025). **“Model Risk in Machine-Learning Distributional IV Estimation”**  
 ([arXiv:2506.12765](https://arxiv.org/abs/2506.12765)).
 
-If using this code, especially in work related to the KAN-D-IV-LATE estimator presented in the papers above, please cite the relevant paper(s) and consider acknowledging the original `efficient-kan` library and the foundational `pykan` library by Liu et al. (2024).
+If using this code, especially in work related to the KAN-D-IV-LATE estimator presented in the paper above, please cite the relevant paper and consider acknowledging the original `efficient-kan` library and the foundational `pykan` library by Liu et al. (2024).
