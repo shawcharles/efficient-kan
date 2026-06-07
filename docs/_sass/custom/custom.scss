@@ -54,7 +54,7 @@ body {
 }
 
 .main-content {
-  max-width: 1240px;
+  max-width: none;
   padding-top: 2rem;
 }
 
@@ -276,8 +276,9 @@ body {
   }
 
   .main {
-    margin-left: 17.5rem;
-    max-width: none;
+    width: calc(100% - 17.5rem) !important;
+    max-width: none !important;
+    margin-left: 17.5rem !important;
   }
 
   .site-header {
@@ -286,16 +287,17 @@ body {
 
   .main-header,
   .main-content-wrap {
-    max-width: none;
-    padding-left: clamp(2rem, 4vw, 4.5rem);
-    padding-right: clamp(2rem, 4vw, 4.5rem);
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: clamp(1.5rem, 2.4vw, 3rem);
+    padding-right: clamp(1.5rem, 2.4vw, 3rem);
   }
 
   .main-content {
-    width: min(100%, 1240px);
-    max-width: none;
-    margin-left: 0;
-    margin-right: auto;
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
